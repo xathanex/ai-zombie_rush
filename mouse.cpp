@@ -44,7 +44,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
-#include <math.h>
+#include <cmath>
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
@@ -85,6 +85,10 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     painter->setBrush(Qt::red);
     painter->drawEllipse(QPoint(0, 0), 20, 20);
 
+    //wander_targer
+    painter->setBrush(Qt::red);
+    painter->drawEllipse((QPoint(wander_target_x, wander_target_y)), 4, 4);
+
     //body?
     painter->setBrush(color);
     painter->drawEllipse(-10, -20, 20, 40);
@@ -119,4 +123,15 @@ void Mouse::step()
     {
         if(((Object*)item)->isProjectile()){ this->destroy = true; }
     }
+}
+
+void Mouse::control()
+{
+    this->wander();
+}
+
+void Mouse::wander()
+{
+    wander_target_x = sin(180.0/Pi*this->rotation());
+    wander_target_y = cos(180.0/Pi*this->rotation());
 }
