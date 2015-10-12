@@ -3,14 +3,19 @@
 #include "object.h"
 #include "player.h"
 #include "projectile.h"
+#include "obstacle.h"
 
 #include <QtOpenGL>
 
-bool Window::Pressed_upward = FALSE;
-bool Window::Pressed_leftward = FALSE;
-bool Window::Pressed_rightward = FALSE;
-bool Window::Pressed_downward = FALSE;
-bool Window::Pressed_shoot = FALSE;
+bool Window::Pressed_upward = false;
+bool Window::Pressed_leftward = false;
+bool Window::Pressed_rightward = false;
+bool Window::Pressed_downward = false;
+bool Window::Pressed_shoot = false;
+bool Window::Pressed_rotateLeft = false;
+bool Window::Pressed_rotateRight = false;
+int Window::mouseX;
+int Window::mouseY;
 
 Window::Window(QObject *parent)
 {
@@ -36,7 +41,7 @@ Window::Window(QObject *parent)
     this->resize(window_w, window_h);
     this->show();
 
-    scene.setSceneRect(-window_w/2, -window_h/2, window_w, window_h);
+    scene.setSceneRect(0, 0, window_w, window_h);
     scene.setItemIndexMethod(QGraphicsScene::NoIndex);
     this->setScene(&scene);
     this->player = new Player();
@@ -45,10 +50,27 @@ Window::Window(QObject *parent)
     for (int i = 0; i < ZombieCount; ++i)
     {
         Mouse *mouse = new Mouse;
-        mouse->setPos(::sin((i * 6.28) / ZombieCount) * 200,
-                      ::cos((i * 6.28) / ZombieCount) * 200);
+        mouse->setPos((::sin((i * 6.28) / ZombieCount) * 200 )+300,
+                      (::cos((i * 6.28) / ZombieCount) * 200)+300);
         scene.addItem(mouse);
     }
+
+    Obstacle *obstacle = new Obstacle;
+    obstacle->setPos(400,370);
+
+    scene.addItem(obstacle);
+
+    obstacle = new Obstacle;
+    obstacle->setPos(100,420);
+
+    scene.addItem(obstacle);
+
+    obstacle = new Obstacle;
+    obstacle->setPos(800,600);
+
+    scene.addItem(obstacle);
+    qApp->installEventFilter(this);
+
     this->timer.start(10);
     connect(&timer, SIGNAL(timeout()), this, SLOT(MainClockTick()));
 }
@@ -56,7 +78,7 @@ Window::Window(QObject *parent)
 void Window::MainClockTick()
 {
     QList<QGraphicsItem *> items = scene.items();
-    this->centerOn(this->player);
+    //this->centerOn(this->player);
     foreach(QGraphicsItem *item, items)
     {
         Object *object = static_cast<Object *> (item);
@@ -64,7 +86,9 @@ void Window::MainClockTick()
         object->physics();
         object->step();
     }
-    scene.update();
+    this->ProcessPlayer();
+    this->update();
+    //scene.update();
     for(int i = 0; i < items.size(); ++i)
     {
         if(((Object*)items[i])->destroy)
@@ -86,19 +110,19 @@ void Window::keyPressEvent( QKeyEvent *event )
     switch ( action )
     {
     case Upward:
-        Pressed_upward = TRUE;
+        Pressed_upward = true;
         break;
     case Downward:
-        Pressed_downward = TRUE;
+        Pressed_downward = true;
         break;
     case Leftward:
-        Pressed_leftward = TRUE;
+        Pressed_leftward = true;
         break;
     case Rightward:
-        Pressed_rightward = TRUE;
+        Pressed_rightward = true;
         break;
     case Shoot:
-        Pressed_shoot = TRUE;
+        Pressed_shoot = true;
         break;
     default:
         event->ignore();
@@ -119,23 +143,51 @@ void Window::keyReleaseEvent( QKeyEvent *event )
     switch ( action )
     {
     case Upward:
-        Pressed_upward = FALSE;
+        Pressed_upward = false;
         break;
     case Downward:
-        Pressed_downward = FALSE;
+        Pressed_downward = false;
         break;
     case Leftward:
-        Pressed_leftward = FALSE;
+        Pressed_leftward = false;
         break;
     case Rightward:
-        Pressed_rightward = FALSE;
+        Pressed_rightward = false;
         break;
     case Shoot:
-        Pressed_shoot = FALSE;
+        Pressed_shoot = false;
         break;
     default:
         event->ignore();
         return;
     }
     event->accept();
+}
+
+void Window::mouseMoveEvent(QMouseEvent *event){
+
+}
+
+bool Window::eventFilter(QObject *obj, QEvent *event)
+{
+  if (event->type() == QEvent::MouseMove)
+  {
+    QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+    Window::mouseX = mouseEvent->x();
+    Window::mouseY = mouseEvent->y();
+  }
+  return false;
+}
+
+void Window::ProcessPlayer()
+{
+    float linex = (Window::mouseX - this->player->x());
+    float liney = (Window::mouseY - this->player->y());
+
+    float arc = atan2(linex,-liney);
+
+    arc = arc * 180.0 / 3.14156872;
+
+    player->setRotation(arc);
+
 }

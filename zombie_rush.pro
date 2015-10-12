@@ -5,14 +5,16 @@ HEADERS += \
     window.h \
     object.h \
     player.h \
-    projectile.h
+    projectile.h \
+    obstacle.h
 SOURCES += \
 	main.cpp \
         mouse.cpp \
     window.cpp \
     object.cpp \
     player.cpp \
-    projectile.cpp
+    projectile.cpp \
+    obstacle.cpp
 
 RESOURCES += \
 	mice.qrc
