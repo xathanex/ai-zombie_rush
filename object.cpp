@@ -28,7 +28,7 @@ void Object::physics()
 
 void Object::step()
 {
-    this->setPos(mapToParent(speed_x, speed_y));
+    this->setPos(this->pos().rx()+speed_x, this->pos().ry()+speed_y);
     //qDebug() << QString::number(rotvel) + " " + QString::number(slide) + " " + QString::number(speed) ;
 }
 
