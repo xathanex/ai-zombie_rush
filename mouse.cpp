@@ -58,11 +58,12 @@ static qreal normalizeAngle(qreal angle)
     return angle;
 }
 
-Mouse::Mouse()
-    : Object(), mouseEyeDirection(0),
-      color(qrand() % 256, qrand() % 256, qrand() % 256)
+Mouse::Mouse(): Object(), mouseEyeDirection(0), color(qrand() % 256, qrand() % 256, qrand() % 256)
 {
     setRotation(qrand() % (360 * 16));
+    double rot = this->rotation()*Pi/180.0;
+    wander_target_x = 100*sin(rot);
+    wander_target_y = 100*cos(rot);
 }
 
 QRectF Mouse::boundingRect() const
@@ -86,8 +87,8 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     painter->drawEllipse(QPoint(0, 0), 20, 20);
 
     //wander_targer
-    painter->setBrush(Qt::red);
-    painter->drawEllipse((QPoint(wander_target_x, wander_target_y)), 4, 4);
+    painter->setBrush(Qt::white);
+    painter->drawEllipse(mapFromScene(QPoint(this->pos().rx()+wander_target_x, this->pos().ry()+wander_target_y)), 20, 20);
 
     //body?
     painter->setBrush(color);
@@ -119,6 +120,7 @@ void Mouse::advance(int step){}
 
 void Mouse::step()
 {
+    Object::step();
     foreach(QGraphicsItem* item, scene()->collidingItems(this))
     {
         if(((Object*)item)->isProjectile()){ this->destroy = true; }
@@ -132,6 +134,22 @@ void Mouse::control()
 
 void Mouse::wander()
 {
-    wander_target_x = sin(180.0/Pi*this->rotation());
-    wander_target_y = cos(180.0/Pi*this->rotation());
+    const double jitter_radius = 10;
+    const double target_distance = 200;
+
+    double rot = this->rotation()*Pi/180.0;
+    double jitter_angle = (double)rand()/RAND_MAX*2*Pi;
+
+    wander_target_x += jitter_radius*sin(jitter_angle);
+    wander_target_y += jitter_radius*cos(jitter_angle);
+    double length = sqrt(wander_target_x*wander_target_x+wander_target_y*wander_target_y);
+    wander_target_x = wander_target_x/length*target_distance;
+    wander_target_y = wander_target_y/length*target_distance;
+
+    speed_x += wander_target_x;
+    speed_y += wander_target_y;
+
+    double angle = atan2(wander_target_x,-wander_target_y);
+    angle = angle * 180.0 / 3.14156872;
+    this->setRotation(angle);
 }
