@@ -34,8 +34,6 @@ void Object::step()
 
 void Object::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    painter->setBrush(Qt::gray);
-    painter->drawRect(-10, -10, 20, 20);
 }
 
 bool Object::isProjectile(){ return false; }

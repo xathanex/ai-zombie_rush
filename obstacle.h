@@ -8,6 +8,9 @@ class Obstacle : public Object
     public:
         Obstacle();
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+        QRectF boundingRect() const;
+        QPainterPath shape() const;
+
 };
 
 #endif // OBSTACLE_H

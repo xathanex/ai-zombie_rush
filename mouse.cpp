@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 #include "mouse.h"
+#include "window.h"
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -72,6 +73,7 @@ QRectF Mouse::boundingRect() const
                   36 + adjust, 60 + adjust);
 }
 
+//geometria do detekcji kolizji
 QPainterPath Mouse::shape() const
 {
     QPainterPath path;
@@ -109,14 +111,20 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     path.cubicTo(-5, 32, -5, 42, 0, 35);
     painter->setBrush(Qt::NoBrush);
     painter->drawPath(path);
+
 }
 
 void Mouse::advance(int step){}
 
 void Mouse::step()
 {
+    Object::step();
     foreach(QGraphicsItem* item, scene()->collidingItems(this))
     {
         if(((Object*)item)->isProjectile()){ this->destroy = true; }
     }
+}
+
+void Mouse::control()
+{
 }

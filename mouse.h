@@ -53,6 +53,7 @@ public:
 
     void advance(int step);
     void step();
+    void control();
 
 private:
     qreal angle;

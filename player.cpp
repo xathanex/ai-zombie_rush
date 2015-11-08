@@ -10,7 +10,13 @@ Player::Player(): Object() {}
 
 void Player::control()
 {
+    QList<QGraphicsItem *> lvList = scene()->collidingItems(this);
     speed_x = 0; speed_y = 0;
+
+    if(!lvList.isEmpty()){
+        //TODO: obsluga kolizji
+    }
+
     if(Window::Pressed_upward)
     {
         speed_y -= MAX_SPEED;
@@ -21,47 +27,47 @@ void Player::control()
     }
     if(Window::Pressed_leftward)
     {
-        speed_x -= MAX_SPEED;
+            speed_x -= MAX_SPEED;
     }
     if(Window::Pressed_rightward)
     {
-        speed_x += MAX_SPEED;
+            speed_x += MAX_SPEED;
     }
     if(Window::Pressed_shoot)
     {
-       scene()->addItem(new Projectile(this->rotation()*Pi/180, this->x(), this->y()));
+           scene()->addItem(new Projectile(this->rotation()*Pi/180, this->x(), this->y()));
     }
+
+}
+
+QRectF Player::boundingRect() const
+{
+    return QRectF(-20,-20,40,40);
+}
+
+QPainterPath Player::shape() const
+{
+    QPainterPath path;
+    path.addEllipse(QPoint(0, 0), 20, 20);
+    return path;
 }
 
 void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     //bounding sphere
-    painter->setBrush(Qt::green);
+    painter->setBrush(scene()->collidingItems(this).isEmpty() ? Qt::blue : Qt::red);
     painter->drawEllipse(QPoint(0, 0), 20, 20);
 
-    //body
-    painter->setBrush(Qt::black);
-    painter->drawEllipse(-14, -20, 28, 40);
+    QImage myImage;
+    myImage.load(":/images/nyanya.png");
 
-    painter->setBrush(Qt::white);
-    painter->drawEllipse(-10, -17, 8, 8);
-    painter->drawEllipse(2, -17, 8, 8);
+    painter->drawImage(-17,-16,myImage);
 
-    painter->setBrush(Qt::black);
-    painter->drawEllipse(QRectF(-2, -22, 4, 4));
+    painter->drawLine(0,0,0,-500);
 
-    painter->setBrush(Qt::red);
-    painter->drawEllipse(QRectF(-8.0 , -17, 4, 4));
-    painter->drawEllipse(QRectF(4.0 , -17, 4, 4));
+    //painter->setBrush(Qt::black);
+    //painter->drawPath(shape());
 
-    painter->setBrush(Qt::gray);
-    painter->drawEllipse(-17, -12, 16, 16);
-    painter->drawEllipse(1, -12, 16, 16);
-
-    QPainterPath path(QPointF(0, 20));
-    path.cubicTo(-5, 22, -5, 22, 0, 25);
-    path.cubicTo(5, 27, 5, 32, 0, 30);
-    path.cubicTo(-5, 32, -5, 42, 0, 35);
-    painter->setBrush(Qt::NoBrush);
-    painter->drawPath(path);
 }
+
+

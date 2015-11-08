@@ -14,7 +14,7 @@ public:
     QGraphicsScene scene;
     QTimer timer;
 
-    Player* player;
+    static Player* player;
 
     static bool Pressed_upward;
     static bool Pressed_leftward;
@@ -29,6 +29,7 @@ public:
     static int mouseX;
     static int mouseY;
     void ProcessPlayer();
+
 
     bool eventFilter(QObject *obj, QEvent *event);
 

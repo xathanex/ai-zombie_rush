@@ -9,6 +9,7 @@ public:
     Object();
     QRectF boundingRect() const;
 
+
     virtual void control();
     virtual void physics();
     virtual void step();

@@ -16,6 +16,7 @@ bool Window::Pressed_rotateLeft = false;
 bool Window::Pressed_rotateRight = false;
 int Window::mouseX;
 int Window::mouseY;
+Player* Window::player = new Player();
 
 Window::Window(QObject *parent)
 {
@@ -44,8 +45,8 @@ Window::Window(QObject *parent)
     scene.setSceneRect(0, 0, window_w, window_h);
     scene.setItemIndexMethod(QGraphicsScene::NoIndex);
     this->setScene(&scene);
-    this->player = new Player();
-    scene.addItem(this->player);
+    //this->player = new Player();
+    scene.addItem(Window::player);
 
     for (int i = 0; i < ZombieCount; ++i)
     {
@@ -181,6 +182,7 @@ bool Window::eventFilter(QObject *obj, QEvent *event)
 
 void Window::ProcessPlayer()
 {
+
     float linex = (Window::mouseX - this->player->x());
     float liney = (Window::mouseY - this->player->y());
 
@@ -191,3 +193,4 @@ void Window::ProcessPlayer()
     player->setRotation(arc);
 
 }
+
