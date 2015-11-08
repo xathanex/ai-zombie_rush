@@ -21,7 +21,7 @@ Player* Window::player = new Player();
 Window::Window(QObject *parent)
 {
     const unsigned short window_w = 1152, window_h = 720;
-    const unsigned short ZombieCount = 5;
+    const unsigned short ZombieCount = 1;
 
     actions.insert( Qt::Key_W, Upward );
     actions.insert( Qt::Key_A, Leftward );
@@ -48,6 +48,16 @@ Window::Window(QObject *parent)
     //this->player = new Player();
     scene.addItem(Window::player);
 
+    /*Obstacle *obstacle = new Obstacle;
+    obstacle->setPos(400,370);
+    scene.addItem(obstacle);
+    obstacle = new Obstacle;
+    obstacle->setPos(100,420);
+    scene.addItem(obstacle);
+    obstacle = new Obstacle;
+    obstacle->setPos(800,600);
+    scene.addItem(obstacle);*/
+
     for (int i = 0; i < ZombieCount; ++i)
     {
         Mouse *mouse = new Mouse;
@@ -56,22 +66,7 @@ Window::Window(QObject *parent)
         scene.addItem(mouse);
     }
 
-    Obstacle *obstacle = new Obstacle;
-    obstacle->setPos(400,370);
-
-    scene.addItem(obstacle);
-
-    obstacle = new Obstacle;
-    obstacle->setPos(100,420);
-
-    scene.addItem(obstacle);
-
-    obstacle = new Obstacle;
-    obstacle->setPos(800,600);
-
-    scene.addItem(obstacle);
     qApp->installEventFilter(this);
-
     this->timer.start(10);
     connect(&timer, SIGNAL(timeout()), this, SLOT(MainClockTick()));
 }

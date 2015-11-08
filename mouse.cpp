@@ -45,7 +45,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
-#include <math.h>
+#include <cmath>
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
@@ -59,11 +59,12 @@ static qreal normalizeAngle(qreal angle)
     return angle;
 }
 
-Mouse::Mouse()
-    : Object(), mouseEyeDirection(0),
-      color(qrand() % 256, qrand() % 256, qrand() % 256)
+Mouse::Mouse(): Object(), mouseEyeDirection(0), color(qrand() % 256, qrand() % 256, qrand() % 256)
 {
     setRotation(qrand() % (360 * 16));
+    double rot = this->rotation()*Pi/180.0;
+    wander_target_x = 100*sin(rot);
+    wander_target_y = 100*cos(rot);
 }
 
 QRectF Mouse::boundingRect() const
@@ -86,6 +87,10 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     //bounding sphere
     painter->setBrush(Qt::red);
     painter->drawEllipse(QPoint(0, 0), 20, 20);
+
+    //wander_targer
+    painter->setBrush(Qt::white);
+    painter->drawEllipse(mapFromScene(QPoint(this->pos().rx()+wander_target_x, this->pos().ry()+wander_target_y)), 20, 20);
 
     //body?
     painter->setBrush(color);
@@ -127,4 +132,27 @@ void Mouse::step()
 
 void Mouse::control()
 {
+    this->wander();
+}
+
+void Mouse::wander()
+{
+    const double jitter_radius = 10;
+    const double target_distance = 200;
+
+    double rot = this->rotation()*Pi/180.0;
+    double jitter_angle = (double)rand()/RAND_MAX*2*Pi;
+
+    wander_target_x += jitter_radius*sin(jitter_angle);
+    wander_target_y += jitter_radius*cos(jitter_angle);
+    double length = sqrt(wander_target_x*wander_target_x+wander_target_y*wander_target_y);
+    wander_target_x = wander_target_x/length*target_distance;
+    wander_target_y = wander_target_y/length*target_distance;
+
+    speed_x += wander_target_x;
+    speed_y += wander_target_y;
+
+    double angle = atan2(wander_target_x,-wander_target_y);
+    angle = angle * 180.0 / 3.14156872;
+    this->setRotation(angle);
 }

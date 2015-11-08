@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <cmath>
 
-Object::Object(): MAX_SPEED(10), speed_x(0), speed_y(0), destroy(false){}
+Object::Object(): MAX_SPEED(3), speed_x(0), speed_y(0), destroy(false){}
 
 QRectF Object::boundingRect() const
 {

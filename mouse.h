@@ -55,6 +55,9 @@ public:
     void step();
     void control();
 
+    double wander_target_x, wander_target_y;
+    void wander();
+
 private:
     qreal angle;
     qreal mouseEyeDirection;
