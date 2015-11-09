@@ -67,7 +67,7 @@ Window::Window(QObject *parent)
     }
 
     qApp->installEventFilter(this);
-    this->timer.start(10);
+    this->timer.start(100);
     connect(&timer, SIGNAL(timeout()), this, SLOT(MainClockTick()));
 }
 

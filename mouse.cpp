@@ -136,10 +136,9 @@ void Mouse::control()
 
 void Mouse::wander()
 {
-    const double jitter_radius = 10;
+    const double jitter_radius = 50;
     const double target_distance = 200;
 
-    double rot = this->rotation()*Pi/180.0;
     double jitter_angle = (double)rand()/RAND_MAX*2*Pi;
 
     wander_target_x += jitter_radius*sin(jitter_angle);
@@ -151,10 +150,18 @@ void Mouse::wander()
 
 void Mouse::seek(double dx, double dy)
 {
-    speed_x += dx;
-    speed_y += dy;
+    const double current_weight = 0.7;
+    const double desired_weight = 0.3;
+    const double max_rot_speed = 30;
+
+    speed_x = speed_x*current_weight+dx*desired_weight;
+    speed_y = speed_y*current_weight+dy*desired_weight;
 
     double angle = atan2(dx,-dy);
-    angle = angle * 180.0 / 3.14156872;
+    angle = angle*180.0/Pi;
+    double dAlpha = angle-this->rotation();
+    while(dAlpha > 180){ dAlpha -= 360; }
+    while(dAlpha < -180){ dAlpha += 360; }
+    angle = this->rotation()+std::max(std::min(dAlpha, max_rot_speed), -max_rot_speed);
     this->setRotation(angle);
 }
