@@ -8,7 +8,7 @@
 class Player : public Object
 {
 public:
-    Player();
+    Player(double x, double y);
     void control();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
