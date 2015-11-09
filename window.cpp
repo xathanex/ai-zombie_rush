@@ -18,11 +18,13 @@ int Window::mouseX;
 int Window::mouseY;
 Player* Window::player = new Player();
 
+
+unsigned short Window::window_w = 1152;
+unsigned short Window::window_h = 720;
+unsigned short Window::ZombieCount = 1;
+
 Window::Window(QObject *parent)
 {
-    const unsigned short window_w = 1152, window_h = 720;
-    const unsigned short ZombieCount = 1;
-
     actions.insert( Qt::Key_W, Upward );
     actions.insert( Qt::Key_A, Leftward );
     actions.insert( Qt::Key_D, Rightward );

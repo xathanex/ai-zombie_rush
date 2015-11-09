@@ -28,6 +28,10 @@ public:
 
     static int mouseX;
     static int mouseY;
+
+    static unsigned short window_w, window_h;
+    static unsigned short ZombieCount;
+
     void ProcessPlayer();
 
 
