@@ -51,12 +51,12 @@ public:
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-    void advance(int step);
     void step();
     void control();
 
     double wander_target_x, wander_target_y;
     void wander();
+    void seek(double dx, double dy);
 
 private:
     qreal angle;

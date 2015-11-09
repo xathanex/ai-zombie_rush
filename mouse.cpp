@@ -119,8 +119,6 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
 
 }
 
-void Mouse::advance(int step){}
-
 void Mouse::step()
 {
     Object::step();
@@ -133,6 +131,7 @@ void Mouse::step()
 void Mouse::control()
 {
     this->wander();
+    this->seek(wander_target_x, wander_target_y);
 }
 
 void Mouse::wander()
@@ -148,11 +147,14 @@ void Mouse::wander()
     double length = sqrt(wander_target_x*wander_target_x+wander_target_y*wander_target_y);
     wander_target_x = wander_target_x/length*target_distance;
     wander_target_y = wander_target_y/length*target_distance;
+}
 
-    speed_x += wander_target_x;
-    speed_y += wander_target_y;
+void Mouse::seek(double dx, double dy)
+{
+    speed_x += dx;
+    speed_y += dy;
 
-    double angle = atan2(wander_target_x,-wander_target_y);
+    double angle = atan2(dx,-dy);
     angle = angle * 180.0 / 3.14156872;
     this->setRotation(angle);
 }
