@@ -57,6 +57,7 @@ public:
     double wander_target_x, wander_target_y;
     void wander();
     void seek(double dx, double dy);
+    void avoidObstacles();
 
 private:
     qreal angle;

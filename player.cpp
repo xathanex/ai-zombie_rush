@@ -8,7 +8,7 @@
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
 
-Player::Player(): Object() {}
+Player::Player(double x, double y): Object() { this->setPos(x, y); }
 
 void Player::control()
 {
@@ -66,6 +66,7 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     //painter->drawPath(shape());
 
 }
+
 
 void Player::step()
 {

@@ -16,12 +16,11 @@ bool Window::Pressed_rotateLeft = false;
 bool Window::Pressed_rotateRight = false;
 int Window::mouseX;
 int Window::mouseY;
-Player* Window::player = new Player();
-
 
 unsigned short Window::window_w = 1152;
 unsigned short Window::window_h = 720;
-unsigned short Window::ZombieCount = 1;
+unsigned short Window::ZombieCount = 10;
+Player* Window::player = new Player(Window::window_w/2, Window::window_h/2);
 
 Window::Window(QObject *parent)
 {
@@ -47,7 +46,6 @@ Window::Window(QObject *parent)
     scene.setSceneRect(0, 0, window_w, window_h);
     scene.setItemIndexMethod(QGraphicsScene::NoIndex);
     this->setScene(&scene);
-    //this->player = new Player();
     scene.addItem(Window::player);
 
     Obstacle *obstacle = new Obstacle;
@@ -63,8 +61,7 @@ Window::Window(QObject *parent)
     for (int i = 0; i < ZombieCount; ++i)
     {
         Mouse *mouse = new Mouse;
-        mouse->setPos((::sin((i * 6.28) / ZombieCount) * 200 )+300,
-                      (::cos((i * 6.28) / ZombieCount) * 200)+300);
+        mouse->setPos(Window::window_w/2.0+(::sin((i * 6.28) / ZombieCount) * 200), Window::window_h/2.0+(::cos((i * 6.28) / ZombieCount) * 200));
         scene.addItem(mouse);
     }
 
