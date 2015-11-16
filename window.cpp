@@ -19,7 +19,7 @@ int Window::mouseY;
 
 unsigned short Window::window_w = 1152;
 unsigned short Window::window_h = 720;
-unsigned short Window::ZombieCount = 1;
+unsigned short Window::ZombieCount = 10;
 Player* Window::player = new Player(Window::window_w/2, Window::window_h/2);
 
 Window::Window(QObject *parent)
@@ -46,7 +46,6 @@ Window::Window(QObject *parent)
     scene.setSceneRect(0, 0, window_w, window_h);
     scene.setItemIndexMethod(QGraphicsScene::NoIndex);
     this->setScene(&scene);
-    //this->player = new Player();
     scene.addItem(Window::player);
 
     /*Obstacle *obstacle = new Obstacle;
@@ -67,7 +66,7 @@ Window::Window(QObject *parent)
     }
 
     qApp->installEventFilter(this);
-    this->timer.start(100);
+    this->timer.start(10);
     connect(&timer, SIGNAL(timeout()), this, SLOT(MainClockTick()));
 }
 

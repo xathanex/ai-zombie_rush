@@ -18,12 +18,7 @@ void Object::control(){}
 
 void Object::physics()
 {
-  double l = pow(speed_x*speed_x + speed_y*speed_y, 0.5);
-  if(l > MAX_SPEED)
-  {
-    speed_x = speed_x/l*MAX_SPEED;
-    speed_y = speed_y/l*MAX_SPEED;
-  }
+  limit_speed();
 }
 
 void Object::step()
@@ -37,3 +32,13 @@ void Object::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 }
 
 bool Object::isProjectile(){ return false; }
+
+void Object::limit_speed()
+{
+    double l = pow(speed_x*speed_x + speed_y*speed_y, 0.5);
+    if(l > MAX_SPEED)
+    {
+      speed_x = speed_x/l*MAX_SPEED;
+      speed_y = speed_y/l*MAX_SPEED;
+    }
+}

@@ -88,9 +88,12 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     painter->setBrush(Qt::red);
     painter->drawEllipse(QPoint(0, 0), 20, 20);
 
-    //wander_targer
+    //blind-stick
     painter->setBrush(Qt::white);
-    painter->drawEllipse(mapFromScene(QPoint(this->pos().rx()+wander_target_x, this->pos().ry()+wander_target_y)), 20, 20);
+    //painter->drawRect(-20, 0, 40, -10*sqrt(speed_x*speed_x+speed_y*speed_y));
+    //future pos
+    QPointF futurePos(this->pos().rx()+20*speed_x, this->pos().ry()+20*speed_y);
+    painter->drawEllipse(mapFromScene(futurePos), 20, 20);
 
     //body?
     painter->setBrush(color);
@@ -132,6 +135,7 @@ void Mouse::control()
 {
     this->wander();
     this->seek(wander_target_x, wander_target_y);
+    this->avoidObstacles();
 }
 
 void Mouse::wander()
@@ -164,4 +168,26 @@ void Mouse::seek(double dx, double dy)
     while(dAlpha < -180){ dAlpha += 360; }
     angle = this->rotation()+std::max(std::min(dAlpha, max_rot_speed), -max_rot_speed);
     this->setRotation(angle);
+    limit_speed();
+}
+
+void Mouse::avoidObstacles()
+{
+    const double mult = 1.5;
+    QPointF futurePos(this->pos());
+    futurePos.rx() += 10*speed_x;
+    futurePos.ry() += 10*speed_y;
+    double d_speed_x = 0;
+    double d_speed_y = 0;
+
+    if(futurePos.rx() < 20){ d_speed_x = mult*futurePos.rx(); }
+    else if(futurePos.rx() > Window::window_w){ d_speed_x = mult*(Window::window_w-futurePos.rx()); }
+
+    if(futurePos.ry() < 20){ d_speed_y = mult*futurePos.ry(); }
+    else if(futurePos.ry() > Window::window_h-20){ d_speed_y = mult*(Window::window_h-20-futurePos.ry()); }
+
+    double sx = speed_x + d_speed_x;
+    double sy = speed_y + d_speed_y;
+
+    seek(sx, sy);
 }

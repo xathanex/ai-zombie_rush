@@ -14,6 +14,8 @@ public:
     virtual void physics();
     virtual void step();
 
+    void limit_speed();
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     double speed_x, speed_y;
