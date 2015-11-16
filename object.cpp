@@ -37,3 +37,4 @@ void Object::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 }
 
 bool Object::isProjectile(){ return false; }
+bool Object::isObstacle(){ return false; }

@@ -1,3 +1,4 @@
+
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QStyleOption>
@@ -5,14 +6,20 @@
 
 #include <math.h>
 
-Projectile::Projectile(double angle, double x, double y): angle(angle), x(x), y(y), life(150){}
+Projectile::Projectile(double angle, double x, double y): angle(angle), x(x), y(y), life(1){
+    this->setRotation(angle-90);
+    this->setPos(x,y);
+}
 
 Projectile::~Projectile(){}
 
 void Projectile::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+
     painter->setBrush(QColor(0,0,255));
-    painter->drawEllipse(x, y, 10, 10);
+    painter->drawRect(QRect(0,0,1000,3));
+
+    //
 }
 
 void Projectile::physics()
@@ -24,7 +31,7 @@ void Projectile::physics()
 
 QRectF Projectile::boundingRect() const
 {
-    return QRectF(-5,-5,10,10);
+    return QRectF(0,0,1000,3);
 }
 
 bool Projectile::isProjectile(){ return true; }

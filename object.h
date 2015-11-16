@@ -20,6 +20,7 @@ public:
 
     bool destroy;
     virtual bool isProjectile();
+    virtual bool isObstacle();
 
     double rotvel;          // predkosc obrotowa (Rotational Velocity)
     static const double rotfriction = 0.9750;     // obrotowy

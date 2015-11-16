@@ -10,7 +10,7 @@ class Obstacle : public Object
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
         QRectF boundingRect() const;
         QPainterPath shape() const;
-
+        bool isObstacle();
 };
 
 #endif // OBSTACLE_H

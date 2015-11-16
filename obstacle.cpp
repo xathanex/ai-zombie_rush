@@ -27,4 +27,5 @@
 
     }
 
+    bool Obstacle::isObstacle(){ return true; }
 

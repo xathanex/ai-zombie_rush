@@ -28,7 +28,7 @@ Window::Window(QObject *parent)
     actions.insert( Qt::Key_W, Upward );
     actions.insert( Qt::Key_A, Leftward );
     actions.insert( Qt::Key_D, Rightward );
-    actions.insert( Qt::Key_E, Shoot );
+    actions.insert( Qt::Key_Space, Shoot );
     actions.insert( Qt::Key_S, Downward );
 
     this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
@@ -50,7 +50,7 @@ Window::Window(QObject *parent)
     //this->player = new Player();
     scene.addItem(Window::player);
 
-    /*Obstacle *obstacle = new Obstacle;
+    Obstacle *obstacle = new Obstacle;
     obstacle->setPos(400,370);
     scene.addItem(obstacle);
     obstacle = new Obstacle;
@@ -58,7 +58,7 @@ Window::Window(QObject *parent)
     scene.addItem(obstacle);
     obstacle = new Obstacle;
     obstacle->setPos(800,600);
-    scene.addItem(obstacle);*/
+    scene.addItem(obstacle);
 
     for (int i = 0; i < ZombieCount; ++i)
     {
@@ -174,6 +174,7 @@ bool Window::eventFilter(QObject *obj, QEvent *event)
     Window::mouseX = mouseEvent->x();
     Window::mouseY = mouseEvent->y();
   }
+  if (event->type() == QEvent::MouseButtonPress)
   return false;
 }
 
