@@ -142,14 +142,18 @@ void Mouse::wander()
 {
     const double jitter_radius = 50;
     const double target_distance = 200;
+    const QRectF field(0, 0, Window::window_w, Window::window_h);
 
-    double jitter_angle = (double)rand()/RAND_MAX*2*Pi;
-
-    wander_target_x += jitter_radius*sin(jitter_angle);
-    wander_target_y += jitter_radius*cos(jitter_angle);
-    double length = sqrt(wander_target_x*wander_target_x+wander_target_y*wander_target_y);
-    wander_target_x = wander_target_x/length*target_distance;
-    wander_target_y = wander_target_y/length*target_distance;
+    do
+    {
+        double jitter_angle = (double)rand()/RAND_MAX*2*Pi;
+        wander_target_x += jitter_radius*sin(jitter_angle);
+        wander_target_y += jitter_radius*cos(jitter_angle);
+        double length = sqrt(wander_target_x*wander_target_x+wander_target_y*wander_target_y);
+        wander_target_x = wander_target_x/length*target_distance;
+        wander_target_y = wander_target_y/length*target_distance;
+    }
+    while(!field.contains(0.4*wander_target_x+this->pos().rx(), 0.4*wander_target_y+this->pos().ry()));
 }
 
 void Mouse::seek(double dx, double dy)
