@@ -221,10 +221,9 @@ void Mouse::avoidObstacles()
                     vs -= dd;
                     vs_x = vs*speed_wersor_x;
                     vs_y = vs*speed_wersor_y;
-
-                    //vs_x & vs_y -- pozycja względna punktu kolizji
                 }
-                else if(d == radius)
+
+                if(d <= radius)
                 {
                     //vs_x & vs_y -- pozycja względna punktu kolizji
                 }
