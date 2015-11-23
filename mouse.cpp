@@ -217,11 +217,16 @@ void Mouse::avoidObstacles()
                 double d = sqrt(dx*dx+dy*dy);
                 if(d < radius)
                 {
+                    double dd = sqrt(radius*radius-d*d);
+                    vs -= dd;
+                    vs_x = vs*speed_wersor_x;
+                    vs_y = vs*speed_wersor_y;
 
+                    //vs_x & vs_y -- pozycja względna punktu kolizji
                 }
                 else if(d == radius)
                 {
-
+                    //vs_x & vs_y -- pozycja względna punktu kolizji
                 }
             }
         }
