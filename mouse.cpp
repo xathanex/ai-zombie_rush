@@ -190,6 +190,43 @@ void Mouse::avoidObstacles()
     if(futurePos.ry() < 20){ d_speed_y = mult*futurePos.ry(); }
     else if(futurePos.ry() > Window::window_h-20){ d_speed_y = mult*(Window::window_h-20-futurePos.ry()); }
 
+    double speed = sqrt(speed_x*speed_x+speed_y*speed_y);
+    double speed_wersor_x = speed_x/speed;
+    double speed_wersor_y = speed_y/speed;
+
+    foreach(QGraphicsItem* it, this->scene()->items())
+    {
+        Object* item = (Object*)it;
+        if(item->isObstacle())
+        {
+            double radius = (item->boundingRect().height()+item->boundingRect().width())/4.0;
+            radius += (this->boundingRect().height()+this->boundingRect().width())/4.0;
+
+            double v_x = item->pos().rx()-this->pos().rx();
+            double v_y = item->pos().ry()-this->pos().ry();
+
+            double vs = speed_wersor_x*vx+speed_wersor_y*vy;
+            if(vs > 0)
+            {
+                double vs_x = vs*speed_wersor_x;
+                double vs_y = vs*speed_wersor_y;
+
+                double dx = item->pos().rx()-(this->pos().rx()+vs_x);
+                double dy = item->pos().ry()-(this->pos().ry()+vs_y);
+
+                double d = sqrt(dx*dx+dy*dy);
+                if(d < radius)
+                {
+
+                }
+                else if(d == radius)
+                {
+
+                }
+            }
+        }
+    }
+
     double sx = speed_x + d_speed_x;
     double sy = speed_y + d_speed_y;
 
