@@ -14,6 +14,8 @@ public:
     QRectF boundingRect() const;
 
     bool isProjectile();
+    bool active;
+    float length;
 
 protected:
     double angle;
