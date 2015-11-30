@@ -145,6 +145,26 @@ void Mouse::control()
     this->avoidObstacles();
 }
 
+void Mouse::physics()
+{
+    Object::physics();
+    double my_radius = (this->boundingRect().height()+this->boundingRect().width())/4.0;
+    foreach(QGraphicsItem* it, this->collidingItems())
+    {
+        Object* item = (Object*)it;
+        double dx = item->pos().rx() - this->pos().rx();
+        double dy = item->pos().ry() - this->pos().ry();
+        double dist = sqrt(dx*dx+dy*dy);
+        double radius = (item->boundingRect().width()+item->boundingRect().height())/4.0;
+
+        if(dist < radius+my_radius)
+        {
+            double trans_length = radius+my_radius-dist;
+            this->setPos(this->pos().rx()-dx/dist*trans_length, this->pos().ry()-dy/dist*trans_length);
+        }
+    }
+}
+
 void Mouse::wander()
 {
     const double jitter_radius = 50;
