@@ -95,6 +95,13 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     QPointF futurePos(this->pos().rx()+20*speed_x, this->pos().ry()+20*speed_y);
     painter->drawEllipse(mapFromScene(futurePos), 20, 20);
 
+    //collisions
+    painter->setBrush(Qt::black);
+    foreach(QPointF point, this->collisions)
+    {
+        painter->drawEllipse(mapFromScene(point), 20, 20);
+    }
+
     //body?
     painter->setBrush(color);
     painter->drawEllipse(-10, -20, 20, 40);
@@ -194,6 +201,7 @@ void Mouse::avoidObstacles()
     double speed_wersor_x = speed_x/speed;
     double speed_wersor_y = speed_y/speed;
 
+    this->collisions = QList<QPointF>();
     foreach(QGraphicsItem* it, this->scene()->items())
     {
         Object* item = (Object*)it;
@@ -205,7 +213,7 @@ void Mouse::avoidObstacles()
             double v_x = item->pos().rx()-this->pos().rx();
             double v_y = item->pos().ry()-this->pos().ry();
 
-            double vs = speed_wersor_x*vx+speed_wersor_y*vy;
+            double vs = speed_wersor_x*v_x+speed_wersor_y*v_y;
             if(vs > 0)
             {
                 double vs_x = vs*speed_wersor_x;
@@ -226,6 +234,20 @@ void Mouse::avoidObstacles()
                 if(d <= radius)
                 {
                     //vs_x & vs_y -- pozycja względna punktu kolizji
+                    double dist = sqrt(vs_x*vs_x+vs_y*vs_y);
+                    if(dist <= 100)
+                    {
+                        this->collisions.append(QPointF(vs_x+this->pos().rx(), vs_y+this->pos().ry()));
+                        //hamowanie
+                        d_speed_x -= speed_wersor_x*MAX_SPEED*10/dist;
+                        d_speed_y -= speed_wersor_y*MAX_SPEED*10/dist;
+                        //odbicie
+                        double dsx = vs_x+this->pos().rx()-item->pos().rx();
+                        double dsy = vs_y+this->pos().ry()-item->pos().ry();
+                        double od = sqrt(dsx*dsx+dsy*dsy);
+                        d_speed_x -= -speed_wersor_y*100/od*MAX_SPEED;
+                        d_speed_y -= speed_wersor_x*100/od*MAX_SPEED;
+                    }
                 }
             }
         }
