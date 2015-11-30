@@ -15,7 +15,8 @@ public:
     QPainterPath shape() const;
     virtual void step();
     float calculateRailLength();
-
+    int cooldown;
+    void physics();
 };
 
 #endif // PLAYER_H
