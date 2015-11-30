@@ -63,6 +63,8 @@ private:
     qreal angle;
     qreal mouseEyeDirection;
     QColor color;
+
+    QList<QPointF> collisions;
 };
 
 #endif

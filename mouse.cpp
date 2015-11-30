@@ -95,6 +95,13 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     QPointF futurePos(this->pos().rx()+20*speed_x, this->pos().ry()+20*speed_y);
     painter->drawEllipse(mapFromScene(futurePos), 20, 20);
 
+    //collisions
+    painter->setBrush(Qt::black);
+    foreach(QPointF point, this->collisions)
+    {
+        painter->drawEllipse(mapFromScene(point), 20, 20);
+    }
+
     //body?
     painter->setBrush(color);
     painter->drawEllipse(-10, -20, 20, 40);
@@ -142,14 +149,18 @@ void Mouse::wander()
 {
     const double jitter_radius = 50;
     const double target_distance = 200;
+    const QRectF field(0, 0, Window::window_w, Window::window_h);
 
-    double jitter_angle = (double)rand()/RAND_MAX*2*Pi;
-
-    wander_target_x += jitter_radius*sin(jitter_angle);
-    wander_target_y += jitter_radius*cos(jitter_angle);
-    double length = sqrt(wander_target_x*wander_target_x+wander_target_y*wander_target_y);
-    wander_target_x = wander_target_x/length*target_distance;
-    wander_target_y = wander_target_y/length*target_distance;
+    do
+    {
+        double jitter_angle = (double)rand()/RAND_MAX*2*Pi;
+        wander_target_x += jitter_radius*sin(jitter_angle);
+        wander_target_y += jitter_radius*cos(jitter_angle);
+        double length = sqrt(wander_target_x*wander_target_x+wander_target_y*wander_target_y);
+        wander_target_x = wander_target_x/length*target_distance;
+        wander_target_y = wander_target_y/length*target_distance;
+    }
+    while(!field.contains(0.4*wander_target_x+this->pos().rx(), 0.4*wander_target_y+this->pos().ry()));
 }
 
 void Mouse::seek(double dx, double dy)
@@ -185,6 +196,62 @@ void Mouse::avoidObstacles()
 
     if(futurePos.ry() < 20){ d_speed_y = mult*futurePos.ry(); }
     else if(futurePos.ry() > Window::window_h-20){ d_speed_y = mult*(Window::window_h-20-futurePos.ry()); }
+
+    double speed = sqrt(speed_x*speed_x+speed_y*speed_y);
+    double speed_wersor_x = speed_x/speed;
+    double speed_wersor_y = speed_y/speed;
+
+    this->collisions = QList<QPointF>();
+    foreach(QGraphicsItem* it, this->scene()->items())
+    {
+        Object* item = (Object*)it;
+        if(item->isObstacle())
+        {
+            double radius = (item->boundingRect().height()+item->boundingRect().width())/4.0;
+            radius += (this->boundingRect().height()+this->boundingRect().width())/4.0;
+
+            double v_x = item->pos().rx()-this->pos().rx();
+            double v_y = item->pos().ry()-this->pos().ry();
+
+            double vs = speed_wersor_x*v_x+speed_wersor_y*v_y;
+            if(vs > 0)
+            {
+                double vs_x = vs*speed_wersor_x;
+                double vs_y = vs*speed_wersor_y;
+
+                double dx = item->pos().rx()-(this->pos().rx()+vs_x);
+                double dy = item->pos().ry()-(this->pos().ry()+vs_y);
+
+                double d = sqrt(dx*dx+dy*dy);
+                if(d < radius)
+                {
+                    double dd = sqrt(radius*radius-d*d);
+                    vs -= dd;
+                    vs_x = vs*speed_wersor_x;
+                    vs_y = vs*speed_wersor_y;
+                }
+
+                if(d <= radius)
+                {
+                    //vs_x & vs_y -- pozycja względna punktu kolizji
+                    double dist = sqrt(vs_x*vs_x+vs_y*vs_y);
+                    if(dist <= 100)
+                    {
+                        this->collisions.append(QPointF(vs_x+this->pos().rx(), vs_y+this->pos().ry()));
+                        //hamowanie
+                        d_speed_x -= speed_wersor_x*MAX_SPEED*10/dist;
+                        d_speed_y -= speed_wersor_y*MAX_SPEED*10/dist;
+                        //odbicie
+                        double dsx = vs_x+this->pos().rx()-item->pos().rx();
+                        double dsy = vs_y+this->pos().ry()-item->pos().ry();
+                        double od = sqrt(dsx*dsx+dsy*dsy);
+                        d_speed_x -= -speed_wersor_y*100/od*MAX_SPEED;
+                        d_speed_y -= speed_wersor_x*100/od*MAX_SPEED;
+                    }
+                }
+            }
+        }
+    }
 
     double sx = speed_x + d_speed_x;
     double sy = speed_y + d_speed_y;
