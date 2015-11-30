@@ -6,7 +6,7 @@
 
 #include <math.h>
 
-Projectile::Projectile(double angle, double x, double y): angle(angle), x(x), y(y), life(1){
+Projectile::Projectile(double angle, double x, double y): angle(angle), x(x), y(y), life(3){
     this->setRotation(angle-90);
     this->setPos(x,y);
     this->active = false;
