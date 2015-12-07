@@ -48,16 +48,6 @@
 #include <cmath>
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
-static double TwoPi = 2.0 * Pi;
-
-static qreal normalizeAngle(qreal angle)
-{
-    while (angle < 0)
-        angle += TwoPi;
-    while (angle > TwoPi)
-        angle -= TwoPi;
-    return angle;
-}
 
 Mouse::Mouse(): Object(), mouseEyeDirection(0), color(qrand() % 256, qrand() % 256, qrand() % 256)
 {
@@ -132,9 +122,14 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
 void Mouse::step()
 {
     Object::step();
-    foreach(QGraphicsItem* item, scene()->collidingItems(this))
+    foreach(QGraphicsItem* it, scene()->collidingItems(this))
     {
-        if(((Object*)item)->isProjectile()){ this->destroy = true; }
+        Object* item = (Object*)it;
+        if((item->isProjectile() && !(item->destroy))){ this->destroy = true; break; }
+    }
+    if(this->collidingItems().indexOf((QGraphicsItem*)Window::player) != -1)
+    {
+      qDebug() << QString("ugryzłam gracza");
     }
 }
 
@@ -143,26 +138,6 @@ void Mouse::control()
     this->wander();
     this->seek(wander_target_x, wander_target_y);
     this->avoidObstacles();
-}
-
-void Mouse::physics()
-{
-    Object::physics();
-    double my_radius = (this->boundingRect().height()+this->boundingRect().width())/4.0;
-    foreach(QGraphicsItem* it, this->collidingItems())
-    {
-        Object* item = (Object*)it;
-        double dx = item->pos().rx() - this->pos().rx();
-        double dy = item->pos().ry() - this->pos().ry();
-        double dist = sqrt(dx*dx+dy*dy);
-        double radius = (item->boundingRect().width()+item->boundingRect().height())/4.0;
-
-        if(dist < radius+my_radius)
-        {
-            double trans_length = radius+my_radius-dist;
-            this->setPos(this->pos().rx()-dx/dist*trans_length, this->pos().ry()-dy/dist*trans_length);
-        }
-    }
 }
 
 void Mouse::wander()

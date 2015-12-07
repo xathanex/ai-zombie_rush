@@ -22,7 +22,7 @@ unsigned short Window::window_h = 720;
 unsigned short Window::ZombieCount = 10;
 Player* Window::player = new Player(Window::window_w/2, Window::window_h/2);
 
-Window::Window(QObject *parent)
+Window::Window()
 {
     actions.insert( Qt::Key_W, Upward );
     actions.insert( Qt::Key_A, Leftward );
@@ -159,11 +159,7 @@ void Window::keyReleaseEvent( QKeyEvent *event )
     event->accept();
 }
 
-void Window::mouseMoveEvent(QMouseEvent *event){
-
-}
-
-bool Window::eventFilter(QObject *obj, QEvent *event)
+bool Window::eventFilter(QObject*, QEvent *event)
 {
   if (event->type() == QEvent::MouseMove)
   {
@@ -171,7 +167,7 @@ bool Window::eventFilter(QObject *obj, QEvent *event)
     Window::mouseX = mouseEvent->x();
     Window::mouseY = mouseEvent->y();
   }
-  if (event->type() == QEvent::MouseButtonPress)
+  if (event->type() == QEvent::MouseButtonPress){}
   return false;
 }
 

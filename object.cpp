@@ -18,17 +18,33 @@ void Object::control(){}
 
 void Object::physics()
 {
-  limit_speed();
+  if(!(this->isProjectile()) && !(this->isObstacle()))
+  {
+    limit_speed();
+    double my_radius = (this->boundingRect().height()+this->boundingRect().width())/4.0;
+    foreach(QGraphicsItem* it, this->collidingItems())
+    {
+        Object* item = (Object*)it;
+        if(!(item->isProjectile()))
+        {
+          double dx = item->pos().rx() - this->pos().rx();
+          double dy = item->pos().ry() - this->pos().ry();
+          double dist = sqrt(dx*dx+dy*dy);
+          double radius = (item->boundingRect().width()+item->boundingRect().height())/4.0;
+
+          if(dist < radius+my_radius)
+          {
+              double trans_length = radius+my_radius-dist;
+              this->setPos(this->pos().rx()-dx/dist*trans_length, this->pos().ry()-dy/dist*trans_length);
+          }
+       }
+    }
+  }
 }
 
 void Object::step()
 {
     this->setPos(this->pos().rx()+speed_x, this->pos().ry()+speed_y);
-    //qDebug() << QString::number(rotvel) + " " + QString::number(slide) + " " + QString::number(speed) ;
-}
-
-void Object::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
-{
 }
 
 bool Object::isProjectile(){ return false; }

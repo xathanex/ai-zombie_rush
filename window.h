@@ -10,7 +10,7 @@ class Window : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit Window(QObject *parent = 0);
+    explicit Window();
     QGraphicsScene scene;
     QTimer timer;
 
@@ -42,7 +42,6 @@ signals:
 public slots:
     void keyPressEvent( QKeyEvent *event );
     void keyReleaseEvent( QKeyEvent *event );
-    void mouseMoveEvent ( QMouseEvent * event );
 
 private slots:
     void MainClockTick();

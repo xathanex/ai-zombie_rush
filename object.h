@@ -16,8 +16,9 @@ public:
 
     void limit_speed();
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*) = 0;
 
+    const double MAX_SPEED;
     double speed_x, speed_y;
 
     bool destroy;
@@ -27,8 +28,6 @@ public:
     double rotvel;          // predkosc obrotowa (Rotational Velocity)
     static const double rotfriction = 0.9750;     // obrotowy
     static const double rotacc = 0.5;           // przyspieszenie obrotowe
-
-    const double MAX_SPEED;
 };
 
 #endif // OBJECT_H

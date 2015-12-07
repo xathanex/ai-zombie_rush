@@ -52,7 +52,6 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     void step();
-    void physics();
     void control();
 
     double wander_target_x, wander_target_y;

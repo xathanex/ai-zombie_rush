@@ -9,8 +9,8 @@ public:
     ~Projectile();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void step();
 
-    void physics();
     QRectF boundingRect() const;
 
     bool isProjectile();
@@ -20,7 +20,6 @@ public:
 protected:
     double angle;
     double x, y;
-    int life;
 };
 
 #endif // PROJECTILE_H

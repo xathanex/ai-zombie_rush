@@ -35,7 +35,7 @@ void Player::control()
         if(cooldown <= 0)
         {
            scene()->addItem(new Projectile(this->rotation(), this->x(), this->y()));
-           this->cooldown = 200;
+           this->cooldown = 100;
         }
     }
 }
@@ -81,16 +81,8 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
 void Player::step()
 {
-
-
-    this->setPos(this->pos().rx()+speed_x, this->pos().ry()+speed_y);
-    this->cooldown--;
-}
-
-void Player::physics()
-{
-    this->cooldown--;
-    //qDebug() << "Cooldown:" << this->cooldown;
+    Object::step();
+    if(cooldown){ --cooldown; }
 }
 
 
