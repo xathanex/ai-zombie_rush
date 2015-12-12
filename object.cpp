@@ -1,5 +1,5 @@
 #include "object.h"
-
+#include "window.h"
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QStyleOption>
@@ -41,7 +41,14 @@ void Object::physics()
 
 void Object::step()
 {
-    this->setPos(this->pos().rx()+speed_x, this->pos().ry()+speed_y);
+    if(this->isProjectile() || this->isObstacle()){ return; }
+
+    double my_radius = (this->boundingRect().height()+this->boundingRect().width())/4.0;
+    double x = this->pos().rx()+speed_x;
+    x = std::min(std::max(my_radius, x), Window::window_w - my_radius);
+    double y = this->pos().ry()+speed_y;
+    y = std::min(std::max(my_radius, y), Window::window_h - my_radius);
+    this->setPos(x, y);
 }
 
 bool Object::isProjectile(){ return false; }
