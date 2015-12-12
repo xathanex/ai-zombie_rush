@@ -23,4 +23,7 @@ void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
 }
 
 bool Obstacle::isObstacle(){ return true; }
+
 void Obstacle::control(){}
+void Obstacle::physics(){}
+void Obstacle::step(){}

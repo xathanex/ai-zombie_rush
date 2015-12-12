@@ -34,9 +34,10 @@ Projectile::Projectile(double angle, double x, double y): angle(angle), x(x), y(
 
 Projectile::~Projectile(){}
 
+void Projectile::control(){}
+void Projectile::physics(){}
 void Projectile::step()
 {
-  Object::step();
   if(!this->active){ this->active = true; }
   else { this->destroy = true; }
 }
@@ -59,4 +60,3 @@ QRectF Projectile::boundingRect() const
 }
 
 bool Projectile::isProjectile(){ return true; }
-void Projectile::control(){}

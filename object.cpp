@@ -15,8 +15,6 @@ QRectF Object::boundingRect() const
 
 void Object::physics()
 {
-  if(!(this->isProjectile()) && !(this->isObstacle()))
-  {
     limit_speed();
     double my_radius = (this->boundingRect().height()+this->boundingRect().width())/4.0;
     foreach(QGraphicsItem* it, this->collidingItems())
@@ -36,13 +34,10 @@ void Object::physics()
           }
        }
     }
-  }
 }
 
 void Object::step()
 {
-    if(this->isProjectile() || this->isObstacle()){ return; }
-
     double my_radius = (this->boundingRect().height()+this->boundingRect().width())/4.0;
     double x = this->pos().rx()+speed_x;
     x = std::min(std::max(my_radius, x), Window::window_w - my_radius);

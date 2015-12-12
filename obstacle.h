@@ -11,7 +11,10 @@ class Obstacle : public Object
         QRectF boundingRect() const;
         QPainterPath shape() const;
         bool isObstacle();
+
         void control();
+        void physics();
+        void step();
 
     private:
         double radius;
