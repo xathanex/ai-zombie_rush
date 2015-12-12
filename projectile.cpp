@@ -3,7 +3,8 @@
 #include <QPainter>
 #include <QStyleOption>
 #include "projectile.h"
-
+#include "window.h"
+#include "player.h"
 #include <math.h>
 
 Projectile::Projectile(double angle, double x, double y): angle(angle), x(x), y(y)
@@ -12,6 +13,23 @@ Projectile::Projectile(double angle, double x, double y): angle(angle), x(x), y(
     this->setPos(x,y);
     this->active = false;
     this->length = 150000;
+    QList<QGraphicsItem *> lvList = Window::player->scene()->collidingItems(this);
+    for(int i = 0; i<lvList.size();i++)
+    {
+        Object *object = static_cast<Object *> (lvList.at(i));
+        if(object->isObstacle())
+        {
+           float ox =  object->pos().rx();
+           float oy=  object->pos().ry();
+
+           float rayLength = sqrt((ox-this->pos().rx())*(ox-this->pos().rx())+(oy-this->pos().ry())*(oy-this->pos().ry()));
+
+           //rayLength -= (object->boundingRect().height())/2;
+
+           if(rayLength < length)
+               length = rayLength;
+        }
+    }
 }
 
 Projectile::~Projectile(){}
@@ -19,27 +37,7 @@ Projectile::~Projectile(){}
 void Projectile::step()
 {
   Object::step();
-  if(!this->active)
-  {
-      QList<QGraphicsItem *> lvList = scene()->collidingItems(this);
-      for(int i = 0; i<lvList.size();i++)
-      {
-          Object *object = static_cast<Object *> (lvList.at(i));
-          if(object->isObstacle())
-          {
-             float ox =  object->pos().rx();
-             float oy=  object->pos().ry();
-
-             float rayLength = sqrt((ox-this->pos().rx())*(ox-this->pos().rx())+(oy-this->pos().ry())*(oy-this->pos().ry()));
-
-             //rayLength -= (object->boundingRect().height())/2;
-
-             if(rayLength < length)
-                 length = rayLength;
-          }
-      }
-      this->active = true;
-  }
+  if(!this->active){ this->active = true; }
   else { this->destroy = true; }
 }
 
@@ -61,3 +59,4 @@ QRectF Projectile::boundingRect() const
 }
 
 bool Projectile::isProjectile(){ return true; }
+void Projectile::control(){}

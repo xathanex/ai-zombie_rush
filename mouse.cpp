@@ -78,10 +78,8 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
     painter->setBrush(Qt::red);
     painter->drawEllipse(QPoint(0, 0), 20, 20);
 
-    //blind-stick
-    painter->setBrush(Qt::white);
-    //painter->drawRect(-20, 0, 40, -10*sqrt(speed_x*speed_x+speed_y*speed_y));
     //future pos
+    painter->setBrush(Qt::white);
     QPointF futurePos(this->pos().rx()+20*speed_x, this->pos().ry()+20*speed_y);
     painter->drawEllipse(mapFromScene(futurePos), 20, 20);
 
@@ -92,7 +90,7 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
         painter->drawEllipse(mapFromScene(point), 20, 20);
     }
 
-    //body?
+    //body
     painter->setBrush(color);
     painter->drawEllipse(-10, -20, 20, 40);
 

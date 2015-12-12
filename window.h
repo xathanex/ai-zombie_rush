@@ -32,16 +32,15 @@ public:
     static unsigned short window_w, window_h;
     static unsigned short ZombieCount;
 
-    void ProcessPlayer();
-
-
-    bool eventFilter(QObject *obj, QEvent *event);
-
 signals:
 
 public slots:
-    void keyPressEvent( QKeyEvent *event );
-    void keyReleaseEvent( QKeyEvent *event );
+    void keyPressEvent(QKeyEvent*);
+    void keyReleaseEvent(QKeyEvent*);
+
+    void mouseMoveEvent(QMouseEvent*);
+    void mousePressEvent(QMouseEvent*);
+    void mouseReleaseEvent(QMouseEvent*);
 
 private slots:
     void MainClockTick();

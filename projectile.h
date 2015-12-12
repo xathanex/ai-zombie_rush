@@ -9,6 +9,7 @@ public:
     ~Projectile();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void control();
     void step();
 
     QRectF boundingRect() const;

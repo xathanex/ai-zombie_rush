@@ -2,30 +2,25 @@
 
 #include <QPainter>
 
-    Obstacle::Obstacle()
-    {}
+Obstacle::Obstacle(double x, double y, double radius): radius(radius) { this->setPos(x, y); }
 
-    QRectF Obstacle::boundingRect() const
-    {
-        return QRectF(-60,-60,120,120);
-    }
+QRectF Obstacle::boundingRect() const
+{
+    return QRectF(-radius,-radius,radius*2,radius*2);
+}
 
-    QPainterPath Obstacle::shape() const
-    {
-        QPainterPath path;
-        path.addEllipse(QPoint(0, 0), 60, 60);
-        return path;
-    }
+QPainterPath Obstacle::shape() const
+{
+    QPainterPath path;
+    path.addEllipse(QPoint(0, 0), radius, radius);
+    return path;
+}
 
-    void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
-    {
-        painter->setBrush(Qt::blue);
-        painter->drawEllipse(QPoint(0, 0), 60, 60);
+void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+{
+    painter->setBrush(Qt::blue);
+    painter->drawEllipse(QPointF(0, 0), this->radius, this->radius);
+}
 
-        //painter->setBrush(Qt::black);
-        //painter->drawPath(shape());
-
-    }
-
-    bool Obstacle::isObstacle(){ return true; }
-
+bool Obstacle::isObstacle(){ return true; }
+void Obstacle::control(){}

@@ -10,7 +10,7 @@ public:
     QRectF boundingRect() const;
 
 
-    virtual void control();
+    virtual void control() = 0;
     virtual void physics();
     virtual void step();
 

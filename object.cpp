@@ -13,9 +13,6 @@ QRectF Object::boundingRect() const
     return QRectF(-10,-10,20,20);
 }
 
-
-void Object::control(){}
-
 void Object::physics()
 {
   if(!(this->isProjectile()) && !(this->isObstacle()))
