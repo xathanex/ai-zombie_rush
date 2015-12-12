@@ -53,8 +53,8 @@ Mouse::Mouse(): Object(), mouseEyeDirection(0), color(qrand() % 256, qrand() % 2
 {
     setRotation(qrand() % (360 * 16));
     double rot = this->rotation()*Pi/180.0;
-    wander_target_x = 100*sin(rot);
-    wander_target_y = 100*cos(rot);
+    target_x = 100*sin(rot);
+    target_y = 100*cos(rot);
 }
 
 QRectF Mouse::boundingRect() const
@@ -138,8 +138,29 @@ void Mouse::step()
 void Mouse::control()
 {
     this->wander();
-    this->seek(wander_target_x, wander_target_y);
+    this->hide();
+    this->seek(target_x, target_y);
     this->avoidObstacles();
+}
+
+void Mouse::hide()
+{
+    QPointF p(this->pos());
+    double dist = 999999;
+    foreach(QPointF coverSpot, Window::coverSpots)
+    {
+        QPointF t(coverSpot);
+        t -= this->pos();
+        double d = t.manhattanLength();
+        if(d < dist || (double)rand()/RAND_MAX < 0.2)
+        {
+            dist = d;
+            p = coverSpot;
+        }
+    }
+    p -= this->pos();
+    target_x += p.x();
+    target_y += p.y();
 }
 
 void Mouse::wander()
@@ -151,13 +172,13 @@ void Mouse::wander()
     do
     {
         double jitter_angle = (double)rand()/RAND_MAX*2*Pi;
-        wander_target_x += jitter_radius*sin(jitter_angle);
-        wander_target_y += jitter_radius*cos(jitter_angle);
-        double length = sqrt(wander_target_x*wander_target_x+wander_target_y*wander_target_y);
-        wander_target_x = wander_target_x/length*target_distance;
-        wander_target_y = wander_target_y/length*target_distance;
+        target_x += jitter_radius*sin(jitter_angle);
+        target_y += jitter_radius*cos(jitter_angle);
+        double length = sqrt(target_x*target_x+target_y*target_y);
+        target_x = target_x/length*target_distance;
+        target_y = target_y/length*target_distance;
     }
-    while(!field.contains(0.4*wander_target_x+this->pos().rx(), 0.4*wander_target_y+this->pos().ry()));
+    while(!field.contains(0.4*target_x+this->pos().rx(), 0.4*target_y+this->pos().ry()));
 }
 
 void Mouse::seek(double dx, double dy)

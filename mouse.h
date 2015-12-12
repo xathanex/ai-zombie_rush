@@ -54,7 +54,8 @@ public:
     void step();
     void control();
 
-    double wander_target_x, wander_target_y;
+    double target_x, target_y;
+    void hide();
     void wander();
     void seek(double dx, double dy);
     void avoidObstacles();
