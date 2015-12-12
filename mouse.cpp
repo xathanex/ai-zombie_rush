@@ -74,6 +74,10 @@ QPainterPath Mouse::shape() const
 
 void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+    //cover spots
+    painter->setBrush(Qt::green);
+    foreach(QPointF spot, Window::coverSpots){ painter->drawEllipse(mapFromScene(spot), 10, 10); }
+
     //bounding sphere
     painter->setBrush(Qt::red);
     painter->drawEllipse(QPoint(0, 0), 20, 20);

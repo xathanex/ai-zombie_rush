@@ -21,6 +21,7 @@ unsigned short Window::window_w = 1152;
 unsigned short Window::window_h = 720;
 unsigned short Window::ZombieCount = 10;
 Player* Window::player = new Player(Window::window_w/2, Window::window_h/2);
+QList<QPointF> Window::coverSpots = QList<QPointF>();
 
 Window::Window()
 {
@@ -74,6 +75,7 @@ void Window::MainClockTick()
         object->physics();
         object->step();
     }
+    this->calculateCoverSpots();
     this->update();
     for(int i = 0; i < items.size(); ++i)
     {
@@ -175,4 +177,25 @@ void Window::mouseReleaseEvent(QMouseEvent* event)
     event->accept();
   }
   else{ event->ignore(); }
+}
+
+void Window::calculateCoverSpots()
+{
+  coverSpots.clear();
+  QList<QGraphicsItem*> items = scene.items();
+  foreach(QGraphicsItem* item, items)
+  {
+      Object* object = static_cast<Object*>(item);
+      if(object->isObstacle())
+      {
+        double radius = (object->boundingRect().width()+object->boundingRect().height())/4.0;
+        QPointF d(object->pos());
+        d -= player->pos();
+        double length = sqrt(d.x()*d.x()+d.y()*d.y());
+        d /= length;
+        d *= length+radius+30;
+        d += player->pos();
+        coverSpots.append(d);
+      }
+  }
 }

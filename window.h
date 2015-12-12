@@ -32,6 +32,8 @@ public:
     static unsigned short window_w, window_h;
     static unsigned short ZombieCount;
 
+    static QList<QPointF> coverSpots;
+
 signals:
 
 public slots:
@@ -44,6 +46,9 @@ public slots:
 
 private slots:
     void MainClockTick();
+
+private:
+    void calculateCoverSpots();
 };
 
 #endif // WINDOW_H
