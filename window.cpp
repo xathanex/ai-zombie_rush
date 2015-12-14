@@ -4,6 +4,7 @@
 #include "player.h"
 #include "projectile.h"
 #include "obstacle.h"
+#include "lifetext.h"
 
 #include <QtOpenGL>
 
@@ -20,6 +21,7 @@ int Window::mouseY;
 unsigned short Window::window_w = 1152;
 unsigned short Window::window_h = 720;
 unsigned short Window::ZombieCount = 10;
+unsigned short Window::PlayerLife = 100;
 Player* Window::player = new Player(Window::window_w/2, Window::window_h/2);
 
 Window::Window(QObject *parent)
@@ -47,6 +49,10 @@ Window::Window(QObject *parent)
     scene.setItemIndexMethod(QGraphicsScene::NoIndex);
     this->setScene(&scene);
     scene.addItem(Window::player);
+
+    LifeText *life = new LifeText;
+    life->setPos(1000,700);
+    scene.addItem(life);
 
     Obstacle *obstacle = new Obstacle;
     obstacle->setPos(400,370);

@@ -31,6 +31,7 @@ public:
 
     static unsigned short window_w, window_h;
     static unsigned short ZombieCount;
+    static unsigned short PlayerLife;
 
     void ProcessPlayer();
 
