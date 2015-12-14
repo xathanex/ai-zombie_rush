@@ -80,6 +80,17 @@ void Window::MainClockTick()
         object->step();
     }
     this->calculateCoverSpots();
+    turnsSinceLastAdd = (turnsSinceLastAdd+1)%20;
+    if(!turnsSinceLastAdd)
+    {
+        Mouse* mouse = new Mouse();
+        unsigned wall = rand()%4;
+        if(wall == 0){ mouse->setPos((double)rand()/RAND_MAX*Window::window_w, 0); }
+        else if(wall == 1){ mouse->setPos((double)rand()/RAND_MAX*Window::window_w, Window::window_h); }
+        else if(wall == 2){ mouse->setPos(0, (double)rand()/RAND_MAX*Window::window_h); }
+        else { mouse->setPos(Window::window_w, (double)rand()/RAND_MAX*Window::window_h); }
+        scene.addItem(mouse);
+    }
     this->update();
     for(int i = 0; i < items.size(); ++i)
     {

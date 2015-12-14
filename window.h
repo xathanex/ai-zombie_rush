@@ -50,6 +50,7 @@ private slots:
 
 private:
     void calculateCoverSpots();
+    unsigned turnsSinceLastAdd;
 };
 
 #endif // WINDOW_H
