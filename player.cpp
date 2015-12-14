@@ -81,10 +81,12 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
 void Player::step()
 {
-
-
     this->setPos(this->pos().rx()+speed_x, this->pos().ry()+speed_y);
     this->cooldown--;
+    if(!scene()->collidingItems(this).isEmpty())
+    {
+
+    }
 }
 
 void Player::physics()
