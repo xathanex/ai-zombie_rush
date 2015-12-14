@@ -61,11 +61,14 @@ public:
     void avoidObstacles();
 
 private:
+    bool attack_player;
     qreal angle;
     qreal mouseEyeDirection;
     QColor color;
 
     QList<QPointF> collisions;
+
+    bool isInGroup();
 };
 
 #endif

@@ -39,6 +39,7 @@
 ****************************************************************************/
 
 #include "mouse.h"
+#include "player.h"
 #include "window.h"
 
 #include <QGraphicsScene>
@@ -74,6 +75,11 @@ QPainterPath Mouse::shape() const
 
 void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+    //nearby sphere
+
+    painter->setBrush(Qt::transparent);
+    painter->drawEllipse(QPoint(0, 0), 160, 160);
+
     //cover spots
     painter->setBrush(Qt::green);
     foreach(QPointF spot, Window::coverSpots){ painter->drawEllipse(mapFromScene(spot), 10, 10); }
@@ -137,10 +143,38 @@ void Mouse::step()
 
 void Mouse::control()
 {
+    attack_player = isInGroup();
+    if(attack_player)
+    {
+        target_x = Window::player->x() - this->x();
+        target_y = Window::player->y() - this->y();
+    }
+    else { this->hide(); }
     this->wander();
-    this->hide();
+
     this->seek(target_x, target_y);
     this->avoidObstacles();
+}
+
+bool Mouse::isInGroup()
+{
+    unsigned mousesNearbyCount = 0;
+    foreach(QGraphicsItem* item, this->scene()->items())
+    {
+        Object* object = (Object*) item;
+        if(!object->isProjectile() && !object->isObstacle() && object != Window::player && object != this)
+        {
+            QPointF d(object->pos());
+            d -= this->pos();
+            double dist = sqrt(d.x()*d.x()+d.y()*d.y());
+            if(dist <= 160)
+            {
+                ++mousesNearbyCount;
+                if(mousesNearbyCount > 3){ return true; }
+            }
+        }
+    }
+    return false;
 }
 
 void Mouse::hide()
