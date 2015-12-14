@@ -16,6 +16,8 @@ public:
     QPainterPath shape() const;
     float calculateRailLength();
 
+    static unsigned short damage;
+
 private:
     int cooldown;
 };

@@ -137,7 +137,8 @@ void Mouse::step()
     }
     if(this->collidingItems().indexOf((QGraphicsItem*)Window::player) != -1)
     {
-      qDebug() << QString("ugryzłam gracza");
+      if(Player::damage <= 10)
+        Player::damage += 1;
     }
 }
 

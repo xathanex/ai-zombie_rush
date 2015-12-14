@@ -8,6 +8,8 @@
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
 
+unsigned short Player::damage = 0;
+
 Player::Player(double x, double y): Object(), cooldown(0) { this->setPos(x, y);}
 
 void Player::control()
@@ -79,6 +81,13 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     myImage.load(":/images/nyanya.png");
 
     painter->drawImage(-17,-16,myImage);
+
+
+    painter->setBrush(Qt::green);
+    painter->drawRect(QRectF(-20,-35,40,5));
+
+    painter->setBrush(Qt::red);
+    painter->drawRect(QRectF(-20,-35,damage * 4,5));
 }
 
 
