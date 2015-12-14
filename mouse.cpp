@@ -48,23 +48,13 @@
 #include <cmath>
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
-static double TwoPi = 2.0 * Pi;
-
-static qreal normalizeAngle(qreal angle)
-{
-    while (angle < 0)
-        angle += TwoPi;
-    while (angle > TwoPi)
-        angle -= TwoPi;
-    return angle;
-}
 
 Mouse::Mouse(): Object(), mouseEyeDirection(0), color(qrand() % 256, qrand() % 256, qrand() % 256)
 {
     setRotation(qrand() % (360 * 16));
     double rot = this->rotation()*Pi/180.0;
-    wander_target_x = 100*sin(rot);
-    wander_target_y = 100*cos(rot);
+    target_x = 100*sin(rot);
+    target_y = 100*cos(rot);
 }
 
 QRectF Mouse::boundingRect() const
@@ -84,14 +74,16 @@ QPainterPath Mouse::shape() const
 
 void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+    //cover spots
+    painter->setBrush(Qt::green);
+    foreach(QPointF spot, Window::coverSpots){ painter->drawEllipse(mapFromScene(spot), 10, 10); }
+
     //bounding sphere
     painter->setBrush(Qt::red);
     painter->drawEllipse(QPoint(0, 0), 20, 20);
 
-    //blind-stick
-    painter->setBrush(Qt::white);
-    //painter->drawRect(-20, 0, 40, -10*sqrt(speed_x*speed_x+speed_y*speed_y));
     //future pos
+    painter->setBrush(Qt::white);
     QPointF futurePos(this->pos().rx()+20*speed_x, this->pos().ry()+20*speed_y);
     painter->drawEllipse(mapFromScene(futurePos), 20, 20);
 
@@ -102,7 +94,7 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
         painter->drawEllipse(mapFromScene(point), 20, 20);
     }
 
-    //body?
+    //body
     painter->setBrush(color);
     painter->drawEllipse(-10, -20, 20, 40);
 
@@ -132,40 +124,43 @@ void Mouse::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
 void Mouse::step()
 {
     Object::step();
-    foreach(QGraphicsItem* item, scene()->collidingItems(this))
+    foreach(QGraphicsItem* it, scene()->collidingItems(this))
     {
-        if(((Object*)item)->isProjectile()){ this->destroy = true; }
+        Object* item = (Object*)it;
+        if((item->isProjectile() && !(item->destroy))){ this->destroy = true; break; }
+    }
+    if(this->collidingItems().indexOf((QGraphicsItem*)Window::player) != -1)
+    {
+      qDebug() << QString("ugryzłam gracza");
     }
 }
 
 void Mouse::control()
 {
     this->wander();
-    this->seek(wander_target_x, wander_target_y);
+    this->hide();
+    this->seek(target_x, target_y);
     this->avoidObstacles();
 }
 
-void Mouse::physics()
+void Mouse::hide()
 {
-    Object::physics();
-    double my_radius = (this->boundingRect().height()+this->boundingRect().width())/4.0;
-    foreach(QGraphicsItem* it, this->collidingItems())
+    QPointF p(this->pos());
+    double dist = 999999;
+    foreach(QPointF coverSpot, Window::coverSpots)
     {
-        Object* item = (Object*)it;
-        if(!item->isProjectile())
+        QPointF t(coverSpot);
+        t -= this->pos();
+        double d = t.manhattanLength();
+        if(d < dist || (double)rand()/RAND_MAX < 0.2)
         {
-            double dx = item->pos().rx() - this->pos().rx();
-            double dy = item->pos().ry() - this->pos().ry();
-            double dist = sqrt(dx*dx+dy*dy);
-            double radius = (item->boundingRect().width()+item->boundingRect().height())/4.0;
-
-            if(dist < radius+my_radius)
-            {
-                double trans_length = radius+my_radius-dist;
-                this->setPos(this->pos().rx()-dx/dist*trans_length, this->pos().ry()-dy/dist*trans_length);
-            }
+            dist = d;
+            p = coverSpot;
         }
     }
+    p -= this->pos();
+    target_x += p.x();
+    target_y += p.y();
 }
 
 void Mouse::wander()
@@ -177,13 +172,13 @@ void Mouse::wander()
     do
     {
         double jitter_angle = (double)rand()/RAND_MAX*2*Pi;
-        wander_target_x += jitter_radius*sin(jitter_angle);
-        wander_target_y += jitter_radius*cos(jitter_angle);
-        double length = sqrt(wander_target_x*wander_target_x+wander_target_y*wander_target_y);
-        wander_target_x = wander_target_x/length*target_distance;
-        wander_target_y = wander_target_y/length*target_distance;
+        target_x += jitter_radius*sin(jitter_angle);
+        target_y += jitter_radius*cos(jitter_angle);
+        double length = sqrt(target_x*target_x+target_y*target_y);
+        target_x = target_x/length*target_distance;
+        target_y = target_y/length*target_distance;
     }
-    while(!field.contains(0.4*wander_target_x+this->pos().rx(), 0.4*wander_target_y+this->pos().ry()));
+    while(!field.contains(0.4*target_x+this->pos().rx(), 0.4*target_y+this->pos().ry()));
 }
 
 void Mouse::seek(double dx, double dy)

@@ -10,7 +10,7 @@ class Window : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit Window(QObject *parent = 0);
+    explicit Window();
     QGraphicsScene scene;
     QTimer timer;
 
@@ -33,20 +33,23 @@ public:
     static unsigned short ZombieCount;
     static unsigned short PlayerLife;
 
-    void ProcessPlayer();
-
-
-    bool eventFilter(QObject *obj, QEvent *event);
+    static QList<QPointF> coverSpots;
 
 signals:
 
 public slots:
-    void keyPressEvent( QKeyEvent *event );
-    void keyReleaseEvent( QKeyEvent *event );
-    void mouseMoveEvent ( QMouseEvent * event );
+    void keyPressEvent(QKeyEvent*);
+    void keyReleaseEvent(QKeyEvent*);
+
+    void mouseMoveEvent(QMouseEvent*);
+    void mousePressEvent(QMouseEvent*);
+    void mouseReleaseEvent(QMouseEvent*);
 
 private slots:
     void MainClockTick();
+
+private:
+    void calculateCoverSpots();
 };
 
 #endif // WINDOW_H

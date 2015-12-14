@@ -23,13 +23,13 @@ unsigned short Window::window_h = 720;
 unsigned short Window::ZombieCount = 10;
 unsigned short Window::PlayerLife = 100;
 Player* Window::player = new Player(Window::window_w/2, Window::window_h/2);
+QList<QPointF> Window::coverSpots = QList<QPointF>();
 
-Window::Window(QObject *parent)
+Window::Window()
 {
     actions.insert( Qt::Key_W, Upward );
     actions.insert( Qt::Key_A, Leftward );
     actions.insert( Qt::Key_D, Rightward );
-    actions.insert( Qt::Key_Space, Shoot );
     actions.insert( Qt::Key_S, Downward );
 
     this->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
@@ -42,6 +42,7 @@ Window::Window(QObject *parent)
     this->setDragMode(QGraphicsView::NoDrag);
     this->setCursor(Qt::CrossCursor);
     this->setWindowTitle("Zombie Rush");
+    this->setMouseTracking(true);
     this->resize(window_w, window_h);
     this->show();
 
@@ -50,19 +51,9 @@ Window::Window(QObject *parent)
     this->setScene(&scene);
     scene.addItem(Window::player);
 
-    LifeText *life = new LifeText;
-    life->setPos(1000,700);
-    scene.addItem(life);
-
-    Obstacle *obstacle = new Obstacle;
-    obstacle->setPos(400,370);
-    scene.addItem(obstacle);
-    obstacle = new Obstacle;
-    obstacle->setPos(100,420);
-    scene.addItem(obstacle);
-    obstacle = new Obstacle;
-    obstacle->setPos(800,600);
-    scene.addItem(obstacle);
+    scene.addItem(new Obstacle(400, 370));
+    scene.addItem(new Obstacle(100, 420));
+    scene.addItem(new Obstacle(800, 600, 100));
 
     for (int i = 0; i < ZombieCount; ++i)
     {
@@ -79,7 +70,6 @@ Window::Window(QObject *parent)
 void Window::MainClockTick()
 {
     QList<QGraphicsItem *> items = scene.items();
-    //this->centerOn(this->player);
     foreach(QGraphicsItem *item, items)
     {
         Object *object = static_cast<Object *> (item);
@@ -87,9 +77,8 @@ void Window::MainClockTick()
         object->physics();
         object->step();
     }
-    this->ProcessPlayer();
+    this->calculateCoverSpots();
     this->update();
-    //scene.update();
     for(int i = 0; i < items.size(); ++i)
     {
         if(((Object*)items[i])->destroy)
@@ -100,7 +89,7 @@ void Window::MainClockTick()
     }
 }
 
-void Window::keyPressEvent( QKeyEvent *event )
+void Window::keyPressEvent(QKeyEvent* event)
 {
     if ( event->isAutoRepeat() || !actions.contains( event->key() ) )
     {
@@ -133,7 +122,7 @@ void Window::keyPressEvent( QKeyEvent *event )
 }
 
 
-void Window::keyReleaseEvent( QKeyEvent *event )
+void Window::keyReleaseEvent(QKeyEvent* event)
 {
     if ( event->isAutoRepeat() || !actions.contains( event->key() ) )
     {
@@ -165,33 +154,50 @@ void Window::keyReleaseEvent( QKeyEvent *event )
     event->accept();
 }
 
-void Window::mouseMoveEvent(QMouseEvent *event){
-
+void Window::mouseMoveEvent(QMouseEvent* event)
+{
+  event->accept();
+  Window::mouseX = event->x();
+  Window::mouseY = event->y();
 }
 
-bool Window::eventFilter(QObject *obj, QEvent *event)
+void Window::mousePressEvent(QMouseEvent* event)
 {
-  if (event->type() == QEvent::MouseMove)
+  if(event->button() == Qt::LeftButton)
   {
-    QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-    Window::mouseX = mouseEvent->x();
-    Window::mouseY = mouseEvent->y();
+    Pressed_shoot = true;
+    event->accept();
   }
-  if (event->type() == QEvent::MouseButtonPress)
-  return false;
+  else{ event->ignore(); }
 }
 
-void Window::ProcessPlayer()
+void Window::mouseReleaseEvent(QMouseEvent* event)
 {
-
-    float linex = (Window::mouseX - this->player->x());
-    float liney = (Window::mouseY - this->player->y());
-
-    float arc = atan2(linex,-liney);
-
-    arc = arc * 180.0 / 3.14156872;
-
-    player->setRotation(arc);
-
+  if(event->button() == Qt::LeftButton)
+  {
+    Pressed_shoot = false;
+    event->accept();
+  }
+  else{ event->ignore(); }
 }
 
+void Window::calculateCoverSpots()
+{
+  coverSpots.clear();
+  QList<QGraphicsItem*> items = scene.items();
+  foreach(QGraphicsItem* item, items)
+  {
+      Object* object = static_cast<Object*>(item);
+      if(object->isObstacle())
+      {
+        double radius = (object->boundingRect().width()+object->boundingRect().height())/4.0;
+        QPointF d(object->pos());
+        d -= player->pos();
+        double length = sqrt(d.x()*d.x()+d.y()*d.y());
+        d /= length;
+        d *= length+radius+30;
+        d += player->pos();
+        coverSpots.append(d);
+      }
+  }
+}

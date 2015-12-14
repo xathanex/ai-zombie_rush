@@ -1,5 +1,5 @@
 #include "object.h"
-
+#include "window.h"
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QStyleOption>
@@ -13,22 +13,37 @@ QRectF Object::boundingRect() const
     return QRectF(-10,-10,20,20);
 }
 
-
-void Object::control(){}
-
 void Object::physics()
 {
-  limit_speed();
+    limit_speed();
+    double my_radius = (this->boundingRect().height()+this->boundingRect().width())/4.0;
+    foreach(QGraphicsItem* it, this->collidingItems())
+    {
+        Object* item = (Object*)it;
+        if(!(item->isProjectile()))
+        {
+          double dx = item->pos().rx() - this->pos().rx();
+          double dy = item->pos().ry() - this->pos().ry();
+          double dist = sqrt(dx*dx+dy*dy);
+          double radius = (item->boundingRect().width()+item->boundingRect().height())/4.0;
+
+          if(dist < radius+my_radius)
+          {
+              double trans_length = radius+my_radius-dist;
+              this->setPos(this->pos().rx()-dx/dist*trans_length, this->pos().ry()-dy/dist*trans_length);
+          }
+       }
+    }
 }
 
 void Object::step()
 {
-    this->setPos(this->pos().rx()+speed_x, this->pos().ry()+speed_y);
-    //qDebug() << QString::number(rotvel) + " " + QString::number(slide) + " " + QString::number(speed) ;
-}
-
-void Object::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
-{
+    double my_radius = (this->boundingRect().height()+this->boundingRect().width())/4.0;
+    double x = this->pos().rx()+speed_x;
+    x = std::min(std::max(my_radius, x), Window::window_w - my_radius);
+    double y = this->pos().ry()+speed_y;
+    y = std::min(std::max(my_radius, y), Window::window_h - my_radius);
+    this->setPos(x, y);
 }
 
 bool Object::isProjectile(){ return false; }
