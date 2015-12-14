@@ -17,8 +17,8 @@ bool Window::Pressed_rotateRight = false;
 int Window::mouseX;
 int Window::mouseY;
 
-unsigned short Window::window_w = 1920;
-unsigned short Window::window_h = 1080;
+unsigned short Window::window_w = 1800;
+unsigned short Window::window_h = 1000;
 unsigned short Window::ZombieCount = 10;
 unsigned short Window::PlayerLife = 100;
 Player* Window::player = new Player(Window::window_w/2, Window::window_h/2);
@@ -50,9 +50,12 @@ Window::Window()
     this->setScene(&scene);
     scene.addItem(Window::player);
 
-    scene.addItem(new Obstacle(400, 370));
-    scene.addItem(new Obstacle(100, 420));
+    scene.addItem(new Obstacle(350, 300, 100));
+    scene.addItem(new Obstacle(300, 800, 130));
     scene.addItem(new Obstacle(800, 600, 100));
+    scene.addItem(new Obstacle(1000, 250, 110));
+    scene.addItem(new Obstacle(1500, 400, 150));
+    scene.addItem(new Obstacle(1350, 800, 100));
 
     for (int i = 0; i < ZombieCount; ++i)
     {
@@ -194,7 +197,7 @@ void Window::calculateCoverSpots()
         d -= player->pos();
         double length = sqrt(d.x()*d.x()+d.y()*d.y());
         d /= length;
-        d *= length+radius+30;
+        d *= length+radius+90;
         d += player->pos();
         coverSpots.append(d);
       }
