@@ -133,7 +133,12 @@ void Mouse::step()
     foreach(QGraphicsItem* it, scene()->collidingItems(this))
     {
         Object* item = (Object*)it;
-        if((item->isProjectile() && !(item->destroy))){ this->destroy = true; break; }
+        if((item->isProjectile() && !(item->destroy)))
+        {
+            this->destroy = true;
+            ++Window::killedCount;
+            break;
+        }
     }
     if(this->collidingItems().indexOf((QGraphicsItem*)Window::player) != -1)
     {

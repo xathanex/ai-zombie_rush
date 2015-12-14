@@ -20,7 +20,7 @@ int Window::mouseY;
 unsigned short Window::window_w = 1800;
 unsigned short Window::window_h = 1000;
 unsigned short Window::ZombieCount = 10;
-unsigned short Window::PlayerLife = 100;
+unsigned short Window::killedCount = 0;
 Player* Window::player = new Player(Window::window_w/2, Window::window_h/2);
 QList<QPointF> Window::coverSpots = QList<QPointF>();
 
@@ -81,7 +81,7 @@ void Window::MainClockTick()
     }
     this->calculateCoverSpots();
     turnsSinceLastAdd = (turnsSinceLastAdd+1)%20;
-    if(!turnsSinceLastAdd)
+    if(!turnsSinceLastAdd && scene.items().contains(player))
     {
         Mouse* mouse = new Mouse();
         unsigned wall = rand()%4;
