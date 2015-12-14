@@ -4,7 +4,6 @@
 #include "player.h"
 #include "projectile.h"
 #include "obstacle.h"
-#include "lifetext.h"
 
 #include <QtOpenGL>
 
@@ -18,8 +17,8 @@ bool Window::Pressed_rotateRight = false;
 int Window::mouseX;
 int Window::mouseY;
 
-unsigned short Window::window_w = 1152;
-unsigned short Window::window_h = 720;
+unsigned short Window::window_w = 1920;
+unsigned short Window::window_h = 1080;
 unsigned short Window::ZombieCount = 10;
 unsigned short Window::PlayerLife = 100;
 Player* Window::player = new Player(Window::window_w/2, Window::window_h/2);
