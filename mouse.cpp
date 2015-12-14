@@ -187,7 +187,7 @@ void Mouse::hide()
         QPointF t(coverSpot);
         t -= this->pos();
         double d = t.manhattanLength();
-        if(d < dist || (double)rand()/RAND_MAX < 0.2)
+        if(d < dist)
         {
             dist = d;
             p = coverSpot;
@@ -292,14 +292,14 @@ void Mouse::avoidObstacles()
                     {
                         this->collisions.append(QPointF(vs_x+this->pos().rx(), vs_y+this->pos().ry()));
                         //hamowanie
-                        d_speed_x -= speed_wersor_x*MAX_SPEED*10/dist;
-                        d_speed_y -= speed_wersor_y*MAX_SPEED*10/dist;
+                        d_speed_x -= speed_wersor_x*MAX_SPEED*20/dist;
+                        d_speed_y -= speed_wersor_y*MAX_SPEED*20/dist;
                         //odbicie
                         double dsx = vs_x+this->pos().rx()-item->pos().rx();
                         double dsy = vs_y+this->pos().ry()-item->pos().ry();
                         double od = sqrt(dsx*dsx+dsy*dsy);
-                        d_speed_x -= -speed_wersor_y*100/od*MAX_SPEED;
-                        d_speed_y -= speed_wersor_x*100/od*MAX_SPEED;
+                        d_speed_x -= -speed_wersor_y*500/od*MAX_SPEED;
+                        d_speed_y -= speed_wersor_x*500/od*MAX_SPEED;
                     }
                 }
             }
