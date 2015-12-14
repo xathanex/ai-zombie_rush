@@ -93,6 +93,9 @@ void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
 void Player::step()
 {
+    if(damage >= 10)
+        this->destroy = true;
+
     Object::step();
     if(cooldown){ --cooldown; }
 }
